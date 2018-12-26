@@ -14,13 +14,11 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import data.entities.Book;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +40,7 @@ public class SheetsQuickstart {
 
     /**
      * Creates an authorized Credential object.
+     *
      * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
@@ -65,10 +64,15 @@ public class SheetsQuickstart {
      * Prints the names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
-    public  void main(String... args) throws IOException, GeneralSecurityException {
+    public void main(String... args) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        final String spreadsheetId = new JSONObject(CREDENTIALS_FILE_PATH).getString("document_id");
+
+        File f = new File("file.json");
+
+        InputStream is = new FileInputStream(CREDENTIALS_FILE_PATH);
+        String jsonTxt = IOUtils.toString(is, "UTF-8");
+        final String spreadsheetId = new JSONObject(jsonTxt).getString("document_id");
         final String range = "Vote!A3:D";
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
@@ -88,9 +92,9 @@ public class SheetsQuickstart {
         }
     }
 
-    public List<Book> parseBooks(List<List<Object>> rawValue){
+    public List<Book> parseBooks(List<List<Object>> rawValue) {
         List<Book> books = new ArrayList<Book>();
-        for (List<Object> row: rawValue) {
+        for (List<Object> row : rawValue) {
             Book book = new Book();
             books.add(book);
         }

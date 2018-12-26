@@ -1,5 +1,7 @@
 package bot;
 
+import data.excel.GoogleSheetReader;
+import data.excel.IBookInfReader;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.telegram.telegrambots.ApiContextInitializer;
@@ -15,7 +17,7 @@ import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
 
-    final static Logger logger = Logger.getLogger(Bot.class);
+    private final static Logger logger = Logger.getLogger(Bot.class);
 
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
@@ -23,11 +25,12 @@ public class Bot extends TelegramLongPollingBot {
         sendMsg(update.getMessage().getChatId().toString(), message);
     }
 
-    public synchronized void sendMsg(String chatId, String s) {
+    private synchronized void sendMsg(String chatId, String s) {
+        IBookInfReader bookreader = new GoogleSheetReader();
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
-        sendMessage.setText(s);
+        sendMessage.setText(bookreader.getAllBooks().get(0).toString());
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {

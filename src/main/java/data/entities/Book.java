@@ -48,4 +48,10 @@ public class Book {
     public void setScores(List<Score> scores) {
         this.scores = scores;
     }
+
+    @Override
+    public String toString() {
+        return "Book name: " + getName() + "\n Author" + getAuthor() +
+                "\n Pages" + getPages() + "\n Description" + getDescription().substring(0,200);
+    }
 }
